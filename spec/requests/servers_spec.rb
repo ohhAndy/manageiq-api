@@ -172,6 +172,15 @@ RSpec.describe "Servers" do
     let(:original_timeout) { server.settings_for_resource[:api][:authentication_timeout] }
     let(:super_admin) { FactoryBot.create(:user, :role => 'super_administrator', :userid => 'alice', :password => 'alicepassword') }
 
+    it "returns settings as YAML when Accept: application/yaml is requested" do
+      api_basic_authorize(:ops_settings)
+
+      get(api_server_settings_url(nil, server), :headers => {"Accept" => "application/yaml"})
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to include("application/yaml")
+      expect { YAML.safe_load(response.body) }.not_to raise_error
+    end
 
     it "shows the settings to an authenticated user with the proper role" do
       api_basic_authorize(:ops_settings)
