@@ -180,6 +180,7 @@ RSpec.describe "Servers" do
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to include("application/yaml")
       expect { YAML.safe_load(response.body) }.not_to raise_error
+      expect { JSON.parse(response.body) }.to raise_error(JSON::ParserError)
     end
 
     it "shows the settings to an authenticated user with the proper role" do
